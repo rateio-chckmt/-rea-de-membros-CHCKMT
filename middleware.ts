@@ -38,10 +38,6 @@ export async function middleware(req: NextRequest) {
     (route) => req.nextUrl.pathname === route || req.nextUrl.pathname.startsWith("/auth/"),
   )
 
-  // Rotas administrativas
-  const adminRoutes = ["/admin"]
-  const isAdminRoute = adminRoutes.some((route) => req.nextUrl.pathname.startsWith(route))
-
   // Se o usuário estiver logado e acessar uma rota pública
   if (session && isPublicRoute && req.nextUrl.pathname !== "/auth/callback") {
     return NextResponse.redirect(new URL("/dashboard", req.url))
@@ -50,15 +46,6 @@ export async function middleware(req: NextRequest) {
   // Se o usuário não estiver logado e acessar uma rota protegida
   if (!session && !isPublicRoute) {
     return NextResponse.redirect(new URL("/", req.url))
-  }
-
-  // Verificar permissões de admin para rotas administrativas
-  if (session && isAdminRoute) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single()
-
-    if (profile?.role !== "admin") {
-      return NextResponse.redirect(new URL("/dashboard", req.url))
-    }
   }
 
   return res

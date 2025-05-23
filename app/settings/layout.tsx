@@ -1,9 +1,15 @@
 import type React from "react"
+import Navbar from "@/components/navbar"
 
 export default function SettingsLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return <main>{children}</main>
+  return (
+    <>
+      <Navbar />
+      <main>{children}</main>
+    </>
+  )
 }
